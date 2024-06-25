@@ -24,7 +24,7 @@ app = Quart(__name__)
 async def webhook():
     data = await request.get_json()
     # Обработка данных вебхука здесь
-    print(data)
+    logging.info(f"Получены данные вебхука: {data}")
     return 'OK', 200
 
 @app.route('/')
