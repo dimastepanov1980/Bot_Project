@@ -1,7 +1,7 @@
 import logging
 import os
 import asyncio
-from quart import Quart
+from quart import Quart, request
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from handlers import start, handle_message
@@ -19,6 +19,13 @@ logging.basicConfig(
 
 # Инициализация Quart
 app = Quart(__name__)
+
+@app.route('/webhook', methods=['POST'])
+async def webhook():
+    data = await request.get_json()
+    # Обработка данных вебхука здесь
+    print(data)
+    return 'OK', 200
 
 @app.route('/')
 async def index():
@@ -42,6 +49,7 @@ async def run_bot():
 async def main():
     # Запуск Telegram бота и Quart сервера параллельно
     bot_task = asyncio.create_task(run_bot())
+    app.run(host='0.0.0.0', port=8000)
     quart_task = asyncio.create_task(app.run_task(host='0.0.0.0', port=int(os.environ.get('PORT', 8000))))
     await asyncio.gather(bot_task, quart_task)
 
