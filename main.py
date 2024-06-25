@@ -2,12 +2,10 @@ import logging
 import os
 import asyncio
 from quart import Quart, request
-from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from handlers import start, handle_message
 from config import TELEGRAM_TOKEN
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -45,11 +43,12 @@ async def run_bot():
     await application.initialize()
     await application.start()
     await application.updater.start_polling()
+    logging.info("Telegram bot запущен")
+    await application.idle()
 
 async def main():
     # Запуск Telegram бота и Quart сервера параллельно
     bot_task = asyncio.create_task(run_bot())
-    app.run(host='0.0.0.0', port=8000)
     quart_task = asyncio.create_task(app.run_task(host='0.0.0.0', port=int(os.environ.get('PORT', 8000))))
     await asyncio.gather(bot_task, quart_task)
 
