@@ -3,11 +3,17 @@ import random
 from google.oauth2.service_account import Credentials
 from datetime import datetime
 from telegram import Bot
-import asyncio
+import base64
+import json
+import os
+
+
 
 # Подключаемся к Google Sheets
 scopes = ["https://www.googleapis.com/auth/spreadsheets"]
-creds = Credentials.from_service_account_file("credentials.json", scopes=scopes)
+credentials_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+credentials_info = json.loads(base64.b64decode(credentials_json))
+creds = Credentials.from_service_account_info(credentials_info, scopes=scopes)
 client = gspread.authorize(creds)
 sheet_id = "1DbDvZZZcOzOTy5IAd5Wr7rv8iwwS8aII3d6yMkdOZL8"
 sheet = client.open_by_key(sheet_id)
