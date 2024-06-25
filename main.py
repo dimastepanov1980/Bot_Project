@@ -2,10 +2,12 @@ import logging
 import os
 import asyncio
 from quart import Quart, request
+from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from handlers import start, handle_message
 from config import TELEGRAM_TOKEN
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
@@ -17,13 +19,6 @@ logging.basicConfig(
 
 # Инициализация Quart
 app = Quart(__name__)
-
-@app.route('/webhook', methods=['POST'])
-async def webhook():
-    data = await request.get_json()
-    # Обработка данных вебхука здесь
-    logging.info(f"Получены данные вебхука: {data}")
-    return 'OK', 200
 
 @app.route('/')
 async def index():
@@ -43,8 +38,6 @@ async def run_bot():
     await application.initialize()
     await application.start()
     await application.updater.start_polling()
-    logging.info("Telegram bot запущен")
-    await application.idle()
 
 async def main():
     # Запуск Telegram бота и Quart сервера параллельно
