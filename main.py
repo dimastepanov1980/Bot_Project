@@ -6,6 +6,10 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from handlers import start, handle_message
 from config import TELEGRAM_TOKEN
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Включаем логирование
 logging.basicConfig(

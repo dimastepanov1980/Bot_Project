@@ -6,6 +6,8 @@ from telegram import Bot
 import base64
 import json
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Чтение учетных данных из переменной окружения
 credentials_info = os.getenv("GOOGLE_CREDENTIALS_JSON")
