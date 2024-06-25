@@ -7,10 +7,21 @@ import base64
 import json
 import os
 
+# Чтение учетных данных из переменной окружения
+credentials_info = os.getenv("GOOGLE_CREDENTIALS_JSON")
+if not credentials_info:
+    raise EnvironmentError("GOOGLE_CREDENTIALS_JSON environment variable is not set or empty.")
 
-# Загрузка учетных данных из переменной окружения
-credentials_info = json.loads(os.getenv("GOOGLE_CREDENTIALS_JSON"))
-credentials = Credentials.from_service_account_info(credentials_info)
+# Декодирование base64
+credentials_info = base64.b64decode(credentials_info).decode('utf-8')
+
+# Проверка содержимого
+try:
+    credentials_info = json.loads(credentials_info)
+except json.JSONDecodeError as e:
+    raise ValueError(f"Invalid JSON in GOOGLE_CREDENTIALS_JSON: {e}")
+
+# Создание учетных данных из переменной окружения
 scopes = ["https://www.googleapis.com/auth/spreadsheets"]
 creds = Credentials.from_service_account_info(credentials_info, scopes=scopes)
 
@@ -24,23 +35,7 @@ def convert_to_dicts(values):
     keys = values[0]
     return [dict(zip(keys, row)) for row in values[1:]]
 
-
-import random
-import gspread
-from google.oauth2.service_account import Credentials
-from datetime import datetime
-
-# Подключаемся к Google Sheets
-scopes = ["https://www.googleapis.com/auth/spreadsheets"]
-creds = Credentials.from_service_account_file("credentials.json", scopes=scopes)
-client = gspread.authorize(creds)
-sheet_id = "1DbDvZZZcOzOTy5IAd5Wr7rv8iwwS8aII3d6yMkdOZL8"
-sheet = client.open_by_key(sheet_id)
-
-# Функция для преобразования списка значений в список словарей
-def convert_to_dicts(values):
-    keys = values[0]
-    return [dict(zip(keys, row)) for row in values[1:]]
+# Оставшаяся часть вашего кода...
 
 # Функция для проверки доступности байков и возврата одного случайного байка
 def check_bike_availability(start_date: str, end_date: str, cc: int = None) -> dict:
