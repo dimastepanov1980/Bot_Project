@@ -1,7 +1,8 @@
 import logging
 import os
 import asyncio
-from quart import Quart
+from quart import Quart, request
+from telegram import Update, Bot
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from handlers import start, handle_message
 from config import TELEGRAM_TOKEN
@@ -11,7 +12,7 @@ load_dotenv()
 
 # Включаем логирование
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levellevelname)s - %(message)s',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
@@ -26,6 +27,20 @@ async def index():
 async def test():
     return 'Test route working!'
 
+@app.route('/webhook', methods=['POST'])
+async def webhook():
+    try:
+        data = await request.get_json()
+        logging.info(f"Получены данные вебхука: {data}")
+        
+        update = Update.de_json(data, bot)
+        await application.update_queue.put(update)
+        
+        return 'OK', 200
+    except Exception as e:
+        logging.error(f"Ошибка обработки вебхука: {e}")
+        return 'Internal Server Error', 500
+
 async def run_bot():
     global bot
     global application
@@ -38,12 +53,10 @@ async def run_bot():
     # Регистрация обработчика сообщений
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    # Запуск бота без вебхуков
+    # Запуск бота
     await application.initialize()
     await application.start()
-    await application.updater.start_polling()
-    logging.info("Telegram bot запущен и слушает сообщения")
-    await application.idle()
+    logging.info("Telegram bot запущен и слушает вебхуки")
 
 async def main():
     # Запуск Telegram бота и Quart сервера параллельно
