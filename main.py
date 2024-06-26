@@ -23,24 +23,6 @@ app = Quart(__name__)
 async def index():
     return 'Hello, World!'
 
-@app.route('/test', methods=['GET'])
-async def test():
-    return 'Test route working!'
-
-@app.route('/webhook', methods=['POST'])
-async def webhook():
-    try:
-        data = await request.get_json()
-        logging.info(f"Получены данные вебхука: {data}")
-        
-        update = Update.de_json(data, bot)
-        await application.update_queue.put(update)
-        
-        return 'OK', 200
-    except Exception as e:
-        logging.error(f"Ошибка обработки вебхука: {e}")
-        return 'Internal Server Error', 500
-
 async def run_bot():
     global bot
     global application
@@ -56,7 +38,9 @@ async def run_bot():
     # Запуск бота
     await application.initialize()
     await application.start()
+
     logging.info("Telegram bot запущен и слушает вебхуки")
+    await application.updater.start_polling()
 
 async def main():
     # Запуск Telegram бота и Quart сервера параллельно
