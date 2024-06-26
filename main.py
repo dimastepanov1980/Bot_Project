@@ -1,8 +1,7 @@
 import logging
 import os
 import asyncio
-from quart import Quart
-from telegram import Bot
+from quart import Quart, request
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from handlers import start, handle_message
 from config import TELEGRAM_TOKEN
@@ -21,17 +20,15 @@ app = Quart(__name__)
 
 @app.route('/')
 async def index():
-    return 'Hello, World!!!'
+    return 'Hello, World!'
 
 @app.route('/test', methods=['GET'])
 async def test():
     return 'Test route working!'
 
 async def run_bot():
-    global bot
     global application
     application = Application.builder().token(TELEGRAM_TOKEN).build()
-    bot = application.bot
 
     # Регистрация команды /start
     application.add_handler(CommandHandler("start", start))
@@ -39,12 +36,10 @@ async def run_bot():
     # Регистрация обработчика сообщений
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    # Запуск бота без вебхуков
+    # Запуск бота
     await application.initialize()
     await application.start()
     await application.updater.start_polling()
-    logging.info("Telegram bot запущен и слушает сообщения")
-    await application.idle()
 
 async def main():
     # Запуск Telegram бота и Quart сервера параллельно
