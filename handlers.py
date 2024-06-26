@@ -2,7 +2,7 @@ import logging
 from telegram import Update, ForceReply
 from telegram.ext import CallbackContext
 from openai_client import get_assistant_response
-from main import send_to_crm
+from crm import send_to_crm
 
 logger = logging.getLogger(__name__)
 
