@@ -23,6 +23,10 @@ app = Quart(__name__)
 async def index():
     return 'Hello, World!'
 
+@app.route('/test', methods=['GET'])
+async def test():
+    return 'Test route working!'
+
 @app.route('/webhook', methods=['POST'])
 async def webhook():
     try:
