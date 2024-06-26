@@ -33,6 +33,10 @@ async def webhook():
     
     return 'OK', 200
 
+@app.route('/test', methods=['GET'])
+async def test():
+    return 'Test route working!'
+
 async def run_bot():
     global bot
     global application
@@ -47,10 +51,14 @@ async def run_bot():
 
     # Запуск бота с вебхуками
     webhook_url = f"https://bot-project-8ab97ef4d3f4.herokuapp.com/webhook"
-    logging.info(f"Setting webhook to {webhook_url}")
     await bot.set_webhook(webhook_url)
     await application.initialize()
     await application.start()
+    await application.updater.start_webhook(
+        listen="0.0.0.0",
+        port=int(os.environ.get('PORT', 8000)),
+        url_path='webhook'
+    )
     logging.info("Telegram bot запущен и слушает вебхуки")
     await application.idle()
 
