@@ -23,6 +23,10 @@ app = Quart(__name__)
 async def index():
     return 'Hello, World!'
 
+@app.route('/test', methods=['GET'])
+async def test():
+    return 'Test route working!'
+
 @app.route('/webhook', methods=['POST'])
 async def webhook():
     data = await request.get_json()
@@ -32,10 +36,6 @@ async def webhook():
     await application.update_queue.put(update)
     
     return 'OK', 200
-
-@app.route('/test', methods=['GET'])
-async def test():
-    return 'Test route working!'
 
 async def run_bot():
     global bot
@@ -50,6 +50,7 @@ async def run_bot():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Запуск бота с вебхуками
+    webhook_url = f"https://bot-project-8ab97ef4d3f4.herokuapp.com/webhook"
     webhook_url = f"https://bot-project-8ab97ef4d3f4.herokuapp.com/webhook"
     await bot.set_webhook(webhook_url)
     await application.initialize()
@@ -70,3 +71,4 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
+    
