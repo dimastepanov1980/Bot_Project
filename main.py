@@ -23,10 +23,6 @@ app = Quart(__name__)
 async def index():
     return 'Hello, World!'
 
-@app.route('/test', methods=['GET'])
-async def test():
-    return 'Test route working!'
-
 @app.route('/webhook', methods=['POST'])
 async def webhook():
     data = await request.get_json()
@@ -51,14 +47,10 @@ async def run_bot():
 
     # Запуск бота с вебхуками
     webhook_url = f"https://bot-project-8ab97ef4d3f4.herokuapp.com/webhook"
+    logging.info(f"Setting webhook to {webhook_url}")
     await bot.set_webhook(webhook_url)
     await application.initialize()
     await application.start()
-    await application.updater.start_webhook(
-        listen="0.0.0.0",
-        port=int(os.environ.get('PORT', 8000)),
-        url_path='webhook'
-    )
     logging.info("Telegram bot запущен и слушает вебхуки")
     await application.idle()
 
@@ -70,4 +62,3 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-    
