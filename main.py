@@ -29,17 +29,13 @@ async def test():
 
 @app.route('/webhook', methods=['POST'])
 async def webhook():
-    try:
-        data = await request.get_json()
-        logging.info(f"Получены данные вебхука: {data}")
-        
-        update = Update.de_json(data, bot)
-        await application.update_queue.put(update)
-        
-        return 'OK', 200
-    except Exception as e:
-        logging.error(f"Ошибка обработки вебхука: {e}")
-        return 'Internal Server Error', 500
+    data = await request.get_json()
+    logging.info(f"Получены данные вебхука: {data}")
+    
+    update = Update.de_json(data, bot)
+    await application.update_queue.put(update)
+    
+    return 'OK', 200
 
 async def run_bot():
     global bot
@@ -54,8 +50,7 @@ async def run_bot():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Запуск бота с вебхуками
-    webhook_url = "https://bot-project-8ab97ef4d3f4.herokuapp.com/webhook"
-    logging.info(f"Setting webhook to {webhook_url}")
+    webhook_url = f"https://bot-project-8ab97ef4d3f4.herokuapp.com/webhook"
     await bot.set_webhook(webhook_url)
     await application.initialize()
     await application.start()
