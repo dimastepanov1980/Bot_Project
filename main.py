@@ -1,13 +1,12 @@
 import logging
 import os
 import asyncio
-from quart import Quart, request
+from quart import Quart
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from handlers import start, handle_message
 from config import TELEGRAM_TOKEN
 from dotenv import load_dotenv
 import httpx
-
 
 load_dotenv()
 
