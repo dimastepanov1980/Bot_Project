@@ -2,7 +2,7 @@ import logging
 import httpx
 
 async def send_to_crm(data):
-    crm_url = ""  # Установите URL CRM в пустую строку для тестирования
+    crm_url = f"https://bike-crm-7f78192cffc8.herokuapp.com/webhook"  # Установите URL CRM в пустую строку для тестирования
     if not crm_url:
         logging.info(f"CRM URL is empty. Data to send: {data}")
         return
