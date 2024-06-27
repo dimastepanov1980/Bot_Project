@@ -7,7 +7,7 @@ async def send_to_crm(data):
         logging.info(f"CRM URL is empty. Data to send: {data}")
         return
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         try:
             response = await client.post(crm_url, json=data)
             response.raise_for_status()
