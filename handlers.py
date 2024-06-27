@@ -30,4 +30,5 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
         await send_to_crm({'message': ai_reply, 'type': 'bot', 'user_id': user_id})
     except Exception as e:
         logger.error(f"Ошибка при получении ответа от OpenAI: {e}")
-        await update.message.reply_text('Произошла ошибка при обработке вашего запроса.')
+        await update.message.reply_text('Произошла ошибка при обработке вашего запроса!')
+    
